@@ -6,5 +6,12 @@ namespace Game.Corners {
         void ResetBoard();
 
         void DeselectAll();
+
+        void UnCheckedAll();
+
+        int GetWidth();
+        int GetHeight();
+
+        Cell[] GetCells();
     }
 }

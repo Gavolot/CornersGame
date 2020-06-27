@@ -1,3 +1,4 @@
+using UnityEngine;
 namespace Game.Corners {
     public interface IPawn {
         void Init();
@@ -5,6 +6,10 @@ namespace Game.Corners {
         string GetTag();
 
         Cell GetCell();
+
+        void SearchCellToGuestMe();
+
+        void MoveTo(Vector2 point);
 
         bool isSelected {
             get;
