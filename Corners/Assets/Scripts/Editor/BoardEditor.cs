@@ -42,7 +42,7 @@ namespace Game.Corners {
             _board.whiteCellSprite = EditorGUILayout.ObjectField ("White Cell Sprite: ", _board.whiteCellSprite, typeof (Sprite), true) as Sprite;
             _board.blackCellSprite = EditorGUILayout.ObjectField ("Black Cell Sprite: ", _board.blackCellSprite, typeof (Sprite), true) as Sprite;
 
-            if (EditorGUI.EndChangeCheck () || GUILayout.Button ("Reset")) {
+            if (EditorGUI.EndChangeCheck () || GUILayout.Button ("Reset Cells")) {
                 _board.ResetBoard ();
             }
 
@@ -50,16 +50,12 @@ namespace Game.Corners {
                 _board.ClearBoard ();
             }
 
-            if (GUILayout.Button ("CenteredBoardInWorld")) {
-                _board.CenteredBoardInWorld ();
-            }
-
-            if(GUILayout.Button("CenteredToChilds")){
-                _board.CenteredToChilds();
-            }
-            if(GUILayout.Button("Unchild")){
-                _board.transform.UnParentChilds();
-            }
+            // if(GUILayout.Button("CenteredToChilds")){
+            //     _board.CenteredToChilds();
+            // }
+            // if(GUILayout.Button("Unchild")){
+            //     _board.transform.UnParentChilds();
+            // }
 
             base.OnInspectorGUI ();
 
