@@ -13,6 +13,7 @@ namespace Game.Corners {
         int GetWidth();
         int GetHeight();
 
-        //Cell[] GetCells();
+
+        Cell GetCellFromGrid(int gridX, int gridY);
     }
 }

@@ -1,9 +1,9 @@
 using System;
+using Game;
 using Game.Corners;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Game;
 namespace Game.Corners {
     [CustomEditor (typeof (Board))]
     public class BoardEditor : Editor {
@@ -12,6 +12,13 @@ namespace Game.Corners {
             _board = target as Board;
         }
         public override void OnInspectorGUI () {
+
+            if (_board.horizontalCells > 26) {
+                _board.horizontalCells = 26;
+            }
+            if (_board.verticalCells > 26) {
+                _board.verticalCells = 26;
+            }
 
             while (_board.horizontalCells % 2 == 1) {
                 _board.horizontalCells--;
@@ -49,13 +56,6 @@ namespace Game.Corners {
             if (GUILayout.Button ("Clear Board")) {
                 _board.ClearBoard ();
             }
-
-            // if(GUILayout.Button("CenteredToChilds")){
-            //     _board.CenteredToChilds();
-            // }
-            // if(GUILayout.Button("Unchild")){
-            //     _board.transform.UnParentChilds();
-            // }
 
             base.OnInspectorGUI ();
 

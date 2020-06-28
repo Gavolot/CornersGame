@@ -7,8 +7,10 @@ namespace Game.Corners {
     public class Board : MonoBehaviour, IBoard {
         #region CustomInspector
         [HideInInspector]
+        [SerializeField]
         public int horizontalCells = 8;
         [HideInInspector]
+        [SerializeField]
         public int verticalCells = 8;
         [HideInInspector]
         public Sprite whiteCellSprite;
@@ -22,6 +24,8 @@ namespace Game.Corners {
         public Cell[] cells;
 
         private GameObject[] gameObjectCells;
+
+        char[] chars = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
         public void ClearBoard () {
 #if UNITY_EDITOR
             var tempList = transform.Cast<Transform> ().ToList ();
@@ -36,15 +40,9 @@ namespace Game.Corners {
         }
         public void Init () {
             if (transform.childCount == 0) {
-                MakeGrid();
+                MakeGrid ();
             }
-#if UNITY_EDITOR
-            foreach (var cell in cells) {
-                cell.Init ();
-            }
-#else
             StartCoroutine (CellsInit ());
-#endif
         }
 
         private void MakeGrid () {
@@ -67,7 +65,7 @@ namespace Game.Corners {
                 for (int j = 0; j < horizontalCells; j++) {
                     pos = new Vector2 (sizeH * j, sizeV * i);
 
-                    var lastChild = NewCell (prefab, pos, ref next);
+                    var lastChild = NewCell (prefab, pos, j, i, ref next);
 
                     #region sprite for cell
                     change = next % horizontalCells == 0 || next == 0;
@@ -82,10 +80,13 @@ namespace Game.Corners {
             CenteringAndParent (gameObjectCells);
             transform.position = prevPosition;
         }
-        private GameObject NewCell (GameObject prefab, Vector2 pos, ref int counter) {
+        private GameObject NewCell (GameObject prefab, Vector2 pos, int gridX, int gridY, ref int counter) {
             GameObject res = null;
             res = Instantiate (prefab, pos, Quaternion.identity);
             var cell = res.GetComponent<Cell> ();
+
+            cell.SetHumanCoordinate(chars[gridX].ToString(), gridY+1);
+            cell.SetGridPosition (gridX, gridY);
             gameObjectCells[counter] = res;
             cells[counter] = cell;
             return res;
@@ -134,6 +135,15 @@ namespace Game.Corners {
 
         public Cell[] GetCells () {
             return cells;
+        }
+
+        public Cell GetCellFromGrid(int gridX, int gridY){
+            foreach(var c in cells){
+                if(c.GetGridX() == gridX && c.GetGridY() == gridY){
+                    return c;
+                }
+            }
+            return null;
         }
 
         public void DeselectAll () {

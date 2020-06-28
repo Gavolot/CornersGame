@@ -4,14 +4,7 @@ using System.Linq;
 using Game;
 using UnityEngine;
 namespace Game.Corners {
-    public enum ERules {
-        Classic,
-        NoJumpsFourDirs,
-        NoJumpsAllDirs,
-        NoJumpsDiagonals,
-        Diagonals
-    }
-    public class PawnsCorners : MonoBehaviour {
+    public class PawnsCorners : MonoBehaviour, IInit {
         [HideInInspector]
         public string player_1_tag;
         [HideInInspector]
@@ -25,6 +18,8 @@ namespace Game.Corners {
         private List<IPawn> player2Pawns = null;
         private Camera cameraMain;
         private string step;
+        private int player1Steps = 0;
+        private int player2Steps = 0;
 
         private IMarker[] player1Markers = null;
         private IMarker[] player2Markers = null;
@@ -39,7 +34,19 @@ namespace Game.Corners {
         private LayerMask pawnsLayer = -1;
         [SerializeField]
         private LayerMask cellsLayer = -1;
-        private void Start () {
+
+        private bool isInited = false;
+
+        [SerializeField]
+        private TMPro.TMP_Text journal = null;
+
+        [SerializeField]
+        private GameObject uiGameWinPlayer_1 = null;
+
+        [SerializeField]
+        private GameObject uiGameWinPlayer_2 = null;
+
+        public void Init () {
 
             cameraMain = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera> ();
             board = FindObjectsOfType<MonoBehaviour> ().OfType<IBoard> ().First ();
@@ -52,6 +59,7 @@ namespace Game.Corners {
 
         IEnumerator MarkersInit () {
             yield return new WaitForEndOfFrame ();
+            isInited = true;
 
             var objects1 = GameObject.FindGameObjectsWithTag (player_1_marker_tag);
             var objects2 = GameObject.FindGameObjectsWithTag (player_2_marker_tag);
@@ -69,8 +77,13 @@ namespace Game.Corners {
         }
         IEnumerator PawnsInit () {
             yield return new WaitForEndOfFrame ();
-            player1Pawns = new List<IPawn> ();
-            player2Pawns = new List<IPawn> ();
+            if (player1Pawns == null) {
+                player1Pawns = new List<IPawn> ();
+            }
+            if (player2Pawns == null) {
+                player2Pawns = new List<IPawn> ();
+            }
+
             var pawns = FindObjectsOfType<MonoBehaviour> ().OfType<IPawn> ();
             foreach (var p in pawns) {
                 p.Init ();
@@ -83,38 +96,70 @@ namespace Game.Corners {
             }
         }
 
+        public void ClearAll () {
+            isInited = false;
+            foreach (var p in player1Pawns) {
+                p.Dispose ();
+            }
+            foreach (var p in player2Pawns) {
+                p.Dispose ();
+            }
+            foreach (var m in player1Markers) {
+                m.Dispose ();
+            }
+            foreach (var m in player2Markers) {
+                m.Dispose ();
+            }
+            player1Pawns.Clear ();
+            player2Pawns.Clear ();
+            player1Steps = 0;
+            player2Steps = 0;
+            Player2Win = false;
+            Player1Win = false;
+        }
+
         private void Update () {
-            var mousePos = Input.mousePosition;
+            if (isInited) {
+                if (!Player1Win && !Player2Win) {
+                    var mousePos = Input.mousePosition;
 
-            board.UpdateSelectedCells ();
+                    board.UpdateSelectedCells ();
 
-            if (player1Pawns != null) {
-                foreach (var pawn in player1Pawns) {
-                    pawn.UpdateSelectedRect ();
-                }
-            }
-            if (player2Pawns != null) {
-                foreach (var pawn in player2Pawns) {
-                    pawn.UpdateSelectedRect ();
-                }
-            }
-
-            if (!Player1Win || Player2Win) {
-                if (Input.GetMouseButtonDown (0)) {
-                    var clickPoint = cameraMain.ScreenToWorldPoint (mousePos);
-                    CheckMoveClick (clickPoint);
-                    if (CheckMarkers (player1Pawns, player2Markers)) {
-                        Debug.Log ("Player_1_Win!");
-                        Player1Win = true;
+                    if (player1Pawns != null) {
+                        foreach (var pawn in player1Pawns) {
+                            pawn.UpdateSelectedRect ();
+                        }
                     }
-                    if (CheckMarkers (player2Pawns, player1Markers)) {
-                        Debug.Log ("Player_2_Win!");
-                        Player2Win = true;
+                    if (player2Pawns != null) {
+                        foreach (var pawn in player2Pawns) {
+                            pawn.UpdateSelectedRect ();
+                        }
                     }
-                    CheckSelectedClick (clickPoint);
+
+                    if (Input.GetMouseButtonDown (0)) {
+                        var clickPoint = cameraMain.ScreenToWorldPoint (mousePos);
+                        var isMove = CheckMoveClick (clickPoint);
+                        if (CheckMarkers (player1Pawns, player2Markers)) {
+                            Debug.Log ("Player_1_Win!");
+                            Player1Win = true;
+                        }
+                        if (CheckMarkers (player2Pawns, player1Markers)) {
+                            Debug.Log ("Player_2_Win!");
+                            Player2Win = true;
+                        }
+                        if (!isMove) {
+                            CheckSelectedClick (clickPoint);
+                        }
+                    }
+                } else {
+                    if (Player1Win) {
+                        uiGameWinPlayer_1.SetActive (true);
+                    } else
+                    if (Player2Win) {
+                        uiGameWinPlayer_2.SetActive (true);
+                    }
                 }
             }
-
         }
 
         private bool CheckMarkers (List<IPawn> pawns, IMarker[] markers) {
@@ -168,7 +213,7 @@ namespace Game.Corners {
             }
         }
 
-        private void CheckMoveClick (Vector2 clickPoint) {
+        private bool CheckMoveClick (Vector2 clickPoint) {
             Transform t;
 
             int maskCells = Utils.LayerMaskToInt (cellsLayer);
@@ -180,27 +225,43 @@ namespace Game.Corners {
                 if (cell != null) {
                     if (cell.lastSeenPawn != null) {
                         if (cell.lastSeenPawn.GetSelected ()) {
+
+                            var new_x = cell.GetHumanAlphabetCoordinate ();
+                            var new_y = cell.GetHumanNumberCoordinate ();
+                            var prev_x = cell.lastSeenPawn.GetCell ().GetHumanAlphabetCoordinate ();
+                            var prev_y = cell.lastSeenPawn.GetCell ().GetHumanNumberCoordinate ();
+                            var name = "Белый ";
                             cell.lastSeenPawn.MoveTo (t.position);
+                            int stepValue = 0;
 
                             if (cell.lastSeenPawn.GetTag () == player_1_tag) {
-
                                 step = player_2_tag;
-
+                                name = "Белый ";
+                                player1Steps++;
+                                stepValue = player2Steps;
                             } else {
-
                                 step = player_1_tag;
+                                name = "Черный ";
+                                player2Steps++;
+                                stepValue = player1Steps;
+                            }
 
+                            if (journal != null) {
+                                var stepString = stepValue.ToString () + ":" + name + prev_x + prev_y.ToString () + "-" + new_x + new_y.ToString ();
+                                var text = journal.text;
+                                journal.SetText (text + "\n" + stepString);
                             }
 
                             DeselectAll ();
                             board.DeselectAll ();
                             board.UnCheckedAll ();
-                            return;
+                            return true;
                         }
                     }
 
                 }
             }
+            return false;
         }
 
         private void CheckSelectedAllNeighbours (Cell root_cell) {

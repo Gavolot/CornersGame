@@ -6,7 +6,7 @@ namespace Game.Corners {
     public class Pawn : MonoBehaviour, IPawn {
         public Cell cell;
         [SerializeField]
-        private LayerMask cellLayer;
+        private LayerMask cellLayer = 0;
         [SerializeField]
         private LayerMask markerLayer;
 
@@ -65,6 +65,11 @@ namespace Game.Corners {
                 return true;
             }
             return false;
+        }
+
+        public void Dispose(){
+            //Cache TO DO
+            Destroy(gameObject);
         }
 
         private Cell CheckOverlap (Vector2 point) {

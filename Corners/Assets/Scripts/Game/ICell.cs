@@ -25,8 +25,14 @@ namespace Game.Corners {
         void SetCheckedRight(bool value);
 
         void SetHumanCoordinate(string alphabet, int number);
-        string GetHumanAlphaberCoordinate();
+        string GetHumanAlphabetCoordinate();
         int GetHumanNumberCoordinate();
+
+
+        int GetGridX();
+        int GetGridY();
+
+        void SetGridPosition(int gridX, int gridY);
 
     }
 }

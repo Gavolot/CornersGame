@@ -4,13 +4,17 @@ using UnityEngine;
 namespace Game.Corners {
     public class Cell : MonoBehaviour, ICell {
         [SerializeField]
-        private GameObject selectedRect;
+        private GameObject selectedRect = null;
 
         public IPawn guestPawn;
         public IPawn lastSeenPawn;
+        [SerializeField]
+        private int gridX = 0;
+        [SerializeField]
+        private int gridY = 0;
 
         [SerializeField]
-        private string _coordinateАlphabet = "a";
+        private string _coordinateАlphabet = "A";
 
         [SerializeField]
         private int _coordinateNumber = 1;
@@ -266,12 +270,25 @@ namespace Game.Corners {
             _coordinateNumber = number;
         }
 
-        public string GetHumanAlphaberCoordinate(){
+        public string GetHumanAlphabetCoordinate(){
             return _coordinateАlphabet;
         }
 
         public int GetHumanNumberCoordinate(){
             return _coordinateNumber;
+        }
+
+        public int GetGridX(){
+            return gridX;
+        }
+
+        public int GetGridY(){
+            return gridY;
+        }
+
+        public void SetGridPosition(int gridX, int gridY){
+            this.gridX = gridX;
+            this.gridY = gridY;
         }
     }
 }
