@@ -182,8 +182,10 @@ MonoBehaviour:
   cellLayer:
     serializedVersion: 2
     m_Bits: 256
+  markerLayer:
+    serializedVersion: 2
+    m_Bits: 1024
   selectedRect: {fileID: 149368863429426012}
-  _isSelected: 0
 --- !u!50 &5058121040736381216
 Rigidbody2D:
   serializedVersion: 4

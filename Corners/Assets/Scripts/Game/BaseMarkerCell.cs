@@ -10,6 +10,13 @@ namespace Game.Corners {
             transform.position = overlapCell.transform.position;
         }
 
+        public int GetLayer(){
+            return gameObject.layer;
+        }
+        public string GetTag(){
+            return gameObject.tag;
+        }
+
         private Cell CheckOverlap (Vector2 point) {
             int mask = Utils.LayerMaskToInt (cellLayer);
             Cell res = null;

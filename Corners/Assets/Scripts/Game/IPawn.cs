@@ -15,5 +15,7 @@ namespace Game.Corners {
         void SetSelected(bool value);
 
         void UpdateSelectedRect();
+
+        bool CheckOverlapWithMarker(int layerMask, string tag);
     }
 }

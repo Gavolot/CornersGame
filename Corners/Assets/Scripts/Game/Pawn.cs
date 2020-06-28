@@ -7,6 +7,8 @@ namespace Game.Corners {
         public Cell cell;
         [SerializeField]
         private LayerMask cellLayer;
+        [SerializeField]
+        private LayerMask markerLayer;
 
         public GameObject selectedRect;
 
@@ -17,15 +19,15 @@ namespace Game.Corners {
         private bool _isSelected = false;
         public void Init () {
             if (!cell) {
-                SearchCellToGuestMe();
+                SearchCellToGuestMe ();
             }
         }
 
-        public void MoveTo(Vector2 point){
+        public void MoveTo (Vector2 point) {
             cell.guestPawn = null;
             cell = null;
             transform.position = point;
-            SearchCellToGuestMe();
+            SearchCellToGuestMe ();
         }
 
         public void SearchCellToGuestMe () {
@@ -48,23 +50,42 @@ namespace Game.Corners {
             return cell;
         }
 
-        public void SetSelected(bool value){
+        public void SetSelected (bool value) {
             _isSelected = value;
         }
 
-        public bool GetSelected(){
+        public bool GetSelected () {
             return _isSelected;
+        }
+
+        public bool CheckOverlapWithMarker (int layerMask, string tag) {
+            Vector2 point = transform.position;
+            var marker = CheckOverlapMarker (point, layerMask);
+            if (marker != null && marker.GetTag () == tag) {
+                return true;
+            }
+            return false;
         }
 
         private Cell CheckOverlap (Vector2 point) {
             int mask = Utils.LayerMaskToInt (cellLayer);
             Cell res = null;
-            var ray = Physics2D.Raycast (point, Vector2.up, 1f, 1 << mask);
+            var ray = Physics2D.Raycast (point, Vector2.up, 0.00001f, 1 << mask);
             var collider = ray.collider;
 
-            //var collider = Physics2D.OverlapBox (point, new Vector2 (0.0003f, 0.0003f), 0, 1 << mask);
             if (collider) {
                 res = collider.gameObject.GetComponent<Cell> ();
+            }
+
+            return res;
+        }
+        private IMarker CheckOverlapMarker (Vector2 point, int layerMask) {
+            IMarker res = null;
+            var ray = Physics2D.Raycast (point, Vector2.up, 0.00001f, 1 << layerMask);
+            var collider = ray.collider;
+
+            if (collider) {
+                res = collider.gameObject.GetComponent<IMarker> ();
             }
 
             return res;

@@ -29,6 +29,9 @@ namespace Game.Corners {
         private IMarker[] player1Markers = null;
         private IMarker[] player2Markers = null;
 
+        private bool Player1Win = false;
+        private bool Player2Win = false;
+
         public ERules rules = ERules.Classic;
 
         IBoard board;
@@ -96,11 +99,33 @@ namespace Game.Corners {
                 }
             }
 
-            if (Input.GetMouseButtonDown (0)) {
-                var clickPoint = cameraMain.ScreenToWorldPoint (mousePos);
-                CheckMoveClick (clickPoint);
-                CheckSelectedClick (clickPoint);
+            if (!Player1Win || Player2Win) {
+                if (Input.GetMouseButtonDown (0)) {
+                    var clickPoint = cameraMain.ScreenToWorldPoint (mousePos);
+                    CheckMoveClick (clickPoint);
+                    if (CheckMarkers (player1Pawns, player2Markers)) {
+                        Debug.Log ("Player_1_Win!");
+                        Player1Win = true;
+                    }
+                    if (CheckMarkers (player2Pawns, player1Markers)) {
+                        Debug.Log ("Player_2_Win!");
+                        Player2Win = true;
+                    }
+                    CheckSelectedClick (clickPoint);
+                }
             }
+
+        }
+
+        private bool CheckMarkers (List<IPawn> pawns, IMarker[] markers) {
+            foreach (var pawn in pawns) {
+                foreach (var m in markers) {
+                    if (!pawn.CheckOverlapWithMarker (m.GetLayer (), m.GetTag ())) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         private void CheckSelectedClick (Vector2 clickPoint) {
