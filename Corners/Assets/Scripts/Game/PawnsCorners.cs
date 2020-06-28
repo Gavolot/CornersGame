@@ -657,7 +657,7 @@ namespace Game.Corners {
 
         private Transform CheckOverlap (Vector2 point, int layerMask) {
             Transform res = null;
-            var ray = Physics2D.Raycast (point, Vector2.up, 1f, 1 << layerMask);
+            var ray = Physics2D.Raycast (point, Vector2.up, 0.00001f, 1 << layerMask);
             var collider = ray.collider;
             if (collider) {
                 res = collider.gameObject.transform;
