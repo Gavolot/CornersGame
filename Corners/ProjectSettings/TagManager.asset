@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Player_1
   - Player_2
+  - Player_1_Marker
+  - Player_2_Marker
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - 
   - BoardCells
   - Pawns
-  - 
+  - Markers
   - 
   - 
   - 

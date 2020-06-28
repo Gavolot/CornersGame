@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 namespace Game.Corners {
-    public class Cell : MonoBehaviour {
-        public GameObject selectedRect;
-        public Board board;
+    public class Cell : MonoBehaviour, ICell {
+        [SerializeField]
+        private GameObject selectedRect;
 
-        public Pawn guestPawn;
+        public IPawn guestPawn;
         public IPawn lastSeenPawn;
 
-        public int gridY = 0;
-        public int gridX = 0;
+        [SerializeField]
+        private string _coordinateАlphabet = "a";
 
-        public bool isCheckedUp = false;
-        public bool isCheckedRight = false;
-        public bool isCheckedLeft = false;
-        public bool isCheckedDown = false;
+        [SerializeField]
+        private int _coordinateNumber = 1;
 
-        public bool isCanMoveToMe {
-            set { _isSelected = value; }
-            get { return _isSelected; }
-        }
+        private bool isCheckedUp = false;
+        private bool isCheckedRight = false;
+        private bool isCheckedLeft = false;
+        private bool isCheckedDown = false;
 
-        private bool _isSelected = false;
+        private bool isCheckedLeftUp = false;
+        private bool isCheckedRightUp = false;
+        private bool isCheckedLeftDown = false;
+        private bool isCheckedRightDown = false;
+
+        private bool isSelected = false;
 
         private float width;
         private float height;
@@ -30,7 +33,7 @@ namespace Game.Corners {
         public Transform[] neighborsTransforms;
         public Cell[] neighborsCells;
         private Transform _up;
-        public Cell _upCell;
+        private Cell _upCell;
         public Transform Up {
             get { return _up; }
             private set { _up = value; }
@@ -40,7 +43,7 @@ namespace Game.Corners {
             private set { _upCell = value; }
         }
         private Transform _down;
-        public Cell _downCell;
+        private Cell _downCell;
         public Transform Down {
             get { return _down; }
             private set { _down = value; }
@@ -50,7 +53,7 @@ namespace Game.Corners {
             private set { _downCell = value; }
         }
         private Transform _left;
-        public Cell _leftCell;
+        private Cell _leftCell;
         public Transform Left {
             get { return _left; }
             private set { _left = value; }
@@ -111,13 +114,6 @@ namespace Game.Corners {
         }
         #endregion
         SpriteRenderer spriteRenderer;
-
-        // void Start () {
-        //     spriteRenderer = GetComponent<SpriteRenderer> ();
-        //     width = spriteRenderer.sprite.bounds.size.x;
-        //     height = spriteRenderer.sprite.bounds.size.y;
-        //     ResetNeighbors ();
-        // }
 
         public void Init () {
             spriteRenderer = GetComponent<SpriteRenderer> ();
@@ -201,6 +197,81 @@ namespace Game.Corners {
             }
 
             return res;
+        }
+
+        public bool GetCheckedUp () {
+            return isCheckedUp;
+        }
+        public bool GetCheckedRight () {
+            return isCheckedRight;
+        }
+        public bool GetCheckedLeft () {
+            return isCheckedLeft;
+        }
+        public bool GetCheckedDown () {
+            return isCheckedDown;
+        }
+        public bool GetCheckedLeftDown () {
+            return isCheckedLeftDown;
+        }
+        public bool GetCheckedRightDown () {
+            return isCheckedRightDown;
+        }
+        public bool GetCheckedRightUp () {
+            return isCheckedRightUp;
+        }
+        public bool GetCheckedLeftUp () {
+            return isCheckedLeftUp;
+        }
+
+        public void SetCheckedUp (bool value) {
+            isCheckedUp = value;
+        }
+        public void SetCheckedDown (bool value) {
+            isCheckedDown = value;
+        }
+        public void SetCheckedLeft (bool value) {
+            isCheckedLeft = value;
+        }
+        public void SetCheckedRight (bool value) {
+            isCheckedRight = value;
+        }
+        public void SetCheckedLeftDown (bool value) {
+            isCheckedLeftDown = value;
+        }
+        public void SetCheckedRightDown (bool value) {
+            isCheckedRightDown = value;
+        }
+        public void SetCheckedLeftUp (bool value) {
+            isCheckedLeftUp = value;
+        }
+        public void SetCheckedRightUp (bool value) {
+            isCheckedRightUp = value;
+        }
+
+        public void SetSelected(bool value){
+            isSelected = value;
+        }
+
+        public bool GetSelected(){
+            return isSelected;
+        }
+
+        public void UpdateSelected(){
+            selectedRect.SetActive(isSelected);
+        }
+
+        public void SetHumanCoordinate(string alphabet, int number){
+            _coordinateАlphabet = alphabet;
+            _coordinateNumber = number;
+        }
+
+        public string GetHumanAlphaberCoordinate(){
+            return _coordinateАlphabet;
+        }
+
+        public int GetHumanNumberCoordinate(){
+            return _coordinateNumber;
         }
     }
 }

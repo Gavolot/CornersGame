@@ -3,7 +3,7 @@ using Game.Corners;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Processor;
+using Game;
 namespace Game.Corners {
     [CustomEditor (typeof (Board))]
     public class BoardEditor : Editor {

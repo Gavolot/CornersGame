@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Processor;
+using Game;
 using UnityEngine;
 namespace Game.Corners {
     public class Pawn : MonoBehaviour, IPawn {
         public Cell cell;
-        public LayerMask cellLayer;
+        [SerializeField]
+        private LayerMask cellLayer;
 
         public GameObject selectedRect;
 
@@ -13,7 +14,7 @@ namespace Game.Corners {
             get { return _isSelected; }
             set { _isSelected = value; }
         }
-        public bool _isSelected = false;
+        private bool _isSelected = false;
         public void Init () {
             if (!cell) {
                 SearchCellToGuestMe();
@@ -45,6 +46,14 @@ namespace Game.Corners {
 
         public Cell GetCell () {
             return cell;
+        }
+
+        public void SetSelected(bool value){
+            _isSelected = value;
+        }
+
+        public bool GetSelected(){
+            return _isSelected;
         }
 
         private Cell CheckOverlap (Vector2 point) {

@@ -1,7 +1,6 @@
 namespace Game.Corners {
-    public interface IBoard{
+    public interface IBoard : IInit{
         void ClearBoard ();
-        void Init ();
 
         void ResetBoard();
 
@@ -9,9 +8,11 @@ namespace Game.Corners {
 
         void UnCheckedAll();
 
+        void UpdateSelectedCells();
+
         int GetWidth();
         int GetHeight();
 
-        Cell[] GetCells();
+        //Cell[] GetCells();
     }
 }

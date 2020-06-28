@@ -1,6 +1,6 @@
 using System.Linq;
 using UnityEngine;
-namespace Processor {
+namespace Game {
 
     public static class Utils {
 

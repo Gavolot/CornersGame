@@ -1,7 +1,6 @@
 using UnityEngine;
 namespace Game.Corners {
-    public interface IPawn {
-        void Init();
+    public interface IPawn : IInit{
 
         string GetTag();
 
@@ -11,10 +10,9 @@ namespace Game.Corners {
 
         void MoveTo(Vector2 point);
 
-        bool isSelected {
-            get;
-            set;
-        }
+
+        bool GetSelected();
+        void SetSelected(bool value);
 
         void UpdateSelectedRect();
     }
